@@ -1,6 +1,65 @@
 ﻿@page "/Products"
+
+@using PizzaStoreModels
+
+@inject HttpClient http
+
 <h3>Products</h3>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-md-1">
+                Id
+            </th>
+            <th class="col-md-2">
+                Name
+            </th>
+            <th class="col-md-1">
+                Price
+            </th>
+            <th class="col-md-1">
+                Details
+            </th>
+            <th class="col-md-7"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in ProductList)
+        {
+            <tr>
+                <td class="col-md-1">
+                    @product.ProductId
+                </td>
+                <td class="col-md-2">
+                    @product.ProductName
+                </td>
+                <td class="col-md-1 text-right">
+                    $@product.ProductPrice.ToString("0.00")
+                </td>
+                <td class="col-md-1">
+                    <a href="@($"ProductDetails/{product.ProductId}")">Details</a>
+                </td>
+                <td class="col-md-7"></td>
+            </tr>
+        }
+    </tbody>
+</table>
 @code {
+    public List<ProductViewModel>? ProductList { get; set; } = new List<ProductViewModel>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ProductList = await http.GetFromJsonAsync<List<ProductViewModel>>("api/Products");
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+        await base.OnInitializedAsync();
+    }
 }
